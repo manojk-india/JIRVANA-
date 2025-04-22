@@ -37,6 +37,18 @@ Decomposed:
 
 original: "Jira hygiene for boards under APS "
 1. Jira hygiene for boards under APS
+
+original: "FTE/FTC utilization for APS and TES boards"
+Decomposed:
+1. FTE/FTC utilization for APS board
+2. FTE/FTC utilization for TES board
+
+original: "RTB/CTB utilization for APS and TES boards"
+Decomposed:
+1. RTB/CTB utilization for APS board
+2. RTB/CTB utilization for TES board
+
+
 </Examples>
 
 <OutputFormat>
@@ -115,7 +127,7 @@ prompt3="""
 <QueryGenerator>
 <Objective>
 Generate specific JIRA queries by combining input parameters (boards, names) with the original query template.  
-Output format: JSON array of complete queries
+Output format: List of string queries 
 </Objective>
 
 <Rules>
@@ -162,13 +174,9 @@ Output:
 1. Query count must equal board count  
 2. All board mentions must match input list  
 3. Original query semantics preserved  
-4. No duplicate queries generated
+4. No duplicate queries generated`
 </Validation>
 
-<ErrorCases>
-- Empty boards list: Return original query  
-- Name mismatch: Prioritize input names over query names
-</ErrorCases>
 </QueryGenerator>
 """
 
@@ -185,7 +193,7 @@ Determine if input query requires L1-level data aggregation based on:
 | Trigger Type           | Examples                          | L1 Required? |
 |------------------------|-----------------------------------|--------------|
 | Direct L1 Keywords     | "backlog health", "FTE", "FTC",   | Yes          |
-|                        | "sprint points", "boards under"   |              |
+|                        | "story points", "boards under"   |              |
 | Aggregate Requests     | "all boards", "classification for | Yes          |  
 |                        | boards under X"                   |              |
 | Specific Board Ref     | "for APS board", "in CDF board"   | No           |
@@ -201,16 +209,16 @@ Determine if input query requires L1-level data aggregation based on:
 
 <Examples>
 Query: "Backlog health for Q2" 
-→ {"L1_required": true, "reason": "Direct L1 keyword 'backlog health'"}
+→ {"value": true, "reason": "Direct L1 keyword 'backlog health'"}
 
 Query: "FTE allocation in EBSNF board"  
-→ {"L1_required": true, "reason": "L1 keyword 'FTE' with board context"}
+→ {"value": true, "reason": "L1 keyword 'FTE' with board context"}
 
 Query: "RTB/CTB classification for APS board" 
-→ {"L1_required": false, "reason": "Specific board reference"}
+→ {"value": false, "reason": "Specific board reference"}
 
 Query: "Boards under APS with high CTB" 
-→ {"L1_required": true, "reason": "Hierarchical expansion 'boards under'"}
+→ {"value": true, "reason": "Hierarchical expansion 'boards under'"}
 </Examples>
 
 <OutputFormat>
@@ -219,11 +227,6 @@ Query: "Boards under APS with high CTB"
   "reason": "concise justification",
 }
 </OutputFormat>
-
-<FallbackProcedure>
-If confidence < 0.7 → Route for human review
-If conflicting triggers → Prioritize L1 keywords over board references
-</FallbackProcedure>
 </HierarchyRouter>
 
 """
@@ -231,6 +234,7 @@ If conflicting triggers → Prioritize L1 keywords over board references
 
 prompt5="""
 <HierarchyRouter level="L3">
+note: No function calling is required here 
 <Objective>
 Determine if L3 board queries require data aggregation at L1 or L2 based on:
 1. Metric/entity type (story points vs features)
@@ -241,14 +245,14 @@ Determine if L3 board queries require data aggregation at L1 or L2 based on:
 <DecisionMatrix>
 | Trigger Type           | Examples                          | Target Level | Rationale                     |
 |------------------------|-----------------------------------|--------------|-------------------------------|
-| L1 Metrics             | "story points", "FTE/FTC",        | L1           | Granular work tracking        |
-|                        | "backlog health", "sprint data"    |              |                               |
-| L2 Entities            | "features", "epics",               | L2           | Product management scope      |
-|                        | "RTB/CTB classification"           |              |                               |
-| Hierarchy Expansion    | "boards under", "child boards",    | L1           | Requires drilling down        |
-|                        | "L1 boards" in query               |              |                               |
-| Strategic Terms        | "hygiene", "maturity",             | L2           | High-level analysis           |
-|                        | "portfolio view"                   |              |                               |
+| L1 Metrics             | "story points", "FTE/FTC",        | L1 level     | Granular work tracking        |
+|                        | "backlog health", "sprint data"   |              |                               |
+| L2 Entities            | "features", "epics",              | L2 level     | Product management scope      |
+|                        | "RTB/CTB classification"          |              |                               |
+| Hierarchy Expansion    | "boards under", "child boards",   | L1 level     | Requires drilling down        |
+|                        | "L1 boards" in query              |              |                               |
+| Strategic Terms        | "hygiene", "maturity",            | L2 level     | High-level analysis           |
+|                        | "portfolio view"                  |              |                               |
 </DecisionMatrix>
 
 <ValidationFlow>
@@ -260,30 +264,24 @@ Determine if L3 board queries require data aggregation at L1 or L2 based on:
 
 <Examples>
 Query: "JIRA hygiene for transaction processing"
-→ {"target_level": "L2", "reason": "Strategic term 'hygiene'", "confidence": 0.95}
+→ {"level": "L2 level", "reason": "Strategic term 'hygiene'"}
 
 Query: "Number of features assigned to transaction processing"
-→ {"target_level": "L2", "reason": "L2 entity 'features'", "confidence": 0.9}
+→ {"level": "L2 level", "reason": "L2 entity 'features'"}
 
 Query: "Story points for Uma in transaction processing"
-→ {"target_level": "L1", "reason": "L1 metric 'story points'", "confidence": 1.0}
+→ {"level": "L1 level", "reason": "L1 metric 'story points'"}
 
 Query: "RTB/CTB of L1 boards under transaction processing"
-→ {"target_level": "L1", "reason": "Hierarchy term 'L1 boards under'", "confidence": 1.0}
+→ {"level": "L1 level", "reason": "Hierarchy term 'L1 boards under'"}
 </Examples>
 
 <OutputSchema>
 {
-  "target_level": "L1"|"L2",
+  "level": "L1"|"L2",
   "reason": string,
 }
 </OutputSchema>
-
-<EdgeCaseHandling>
-- Unclear metrics: Default to L2 with confidence=0.5
-- Conflicting triggers: Prefer L1 indicators
-- Missing hierarchy: Assume current level (L3)
-</EdgeCaseHandling>
 </HierarchyRouter>
 
 """

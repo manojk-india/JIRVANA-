@@ -1,0 +1,46 @@
+query is : Backlog heath for Transaction processing
+Intial level is : L3
+queries splitted are : ['Backlog health for Transaction processing']
+-----------------------------------
+Where should we go to L1 or L2 level: L1 level
+------------------------------------------------------------------------------------------------ Operation over 
+query is : JIRA hygiene for features under Transaction processing 
+Intial level is : L3
+queries splitted are : ['JIRA hygiene for features under Transaction processing']
+-----------------------------------
+Where should we go to L1 or L2 level: L2 level
+Multiplied queries are : 
+JIRA hygiene for features under Transaction processing in APS board
+JIRA hygiene for features under Transaction processing in DIS board
+JIRA hygiene for features under Transaction processing in TES board
+-----------------------------------
+------------------------------------------------------------------------------------------------ Operation over 
+
+
+query is : FTE/FTC utilization for Transaction processing 
+Intial level is : L3
+queries splitted are : ['FTE utilization for Transaction processing', 'FTC utilization for Transaction processing']
+-----------------------------------
+Where should we go to L1 or L2 level: L1 level
+Where should we go to L1 or L2 level: L1 level
+------------------------------------------------------------------------------------------------ Operation over 
+query is : FTE/FTC utilization for Transaction processing
+Intial level is : L3
+queries splitted are : ['FTE/FTC utilization for Transaction processing']
+-----------------------------------
+Where should we go to L1 or L2 level: L1 level
+------------------------------------------------------------------------------------------------ Operation over 
+query is : FTE/FTC utilization for Transaction processing
+Intial level is : L3
+queries splitted are : ['FTE/FTC utilization for Transaction processing']
+-----------------------------------
+Where should we go to L1 or L2 level: L1 level
+Multiplied queries are : 
+FTE/FTC utilization for Transaction processing in TES1 board
+FTE/FTC utilization for Transaction processing in TES2 board
+FTE/FTC utilization for Transaction processing in CDF board
+FTE/FTC utilization for Transaction processing in EBSNF board
+FTE/FTC utilization for Transaction processing in APS1 board
+FTE/FTC utilization for Transaction processing in APS2 board
+-----------------------------------
+------------------------------------------------------------------------------------------------ Operation over 

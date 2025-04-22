@@ -11,7 +11,7 @@ import os
 from prompt import prompt1,prompt2,prompt3,prompt4,prompt5
 from agents import English_expert,Jira_expert
 from tasks import Splitter1,Splitter2,Multiplier,should_go_down_or_not,should_we_go_to_L1_or_L2
-from utils import get_person_boards,board_under_L2_board
+from utils import get_person_boards,board_under_L2_board,write_into_checkpoint_file
 
 
 # Load environment variables
@@ -42,6 +42,8 @@ else:
     level="L1"
 
 
+
+
 # crew functions 
 def query_decomposer(prompt,query):
     crew=Crew(agents=[English_expert],tasks=[Splitter1],processes=Process.sequential)
@@ -70,10 +72,15 @@ def L1_or_L2(prompt,query):
 
 # decomposing the query into individual queries
 queries1=query_decomposer(prompt1,query)
+
+# checkpoint file for better inspection of the flow
+write_into_checkpoint_file(["query is : "+query,"Intial level is : "+level,"queries splitted are : "+str(queries1)])
+write_into_checkpoint_file(["-----------------------------------"])
     
 # L1 query
 if ( level == "L1"):
     for i in queries1:
+        write_into_checkpoint_file(["Sub Query is : "+i])
         boards,name,time_period=info_extractor(prompt2,i)
 
         if len(boards)==0:
@@ -86,14 +93,22 @@ if ( level == "L1"):
             # len of board is for sure 1 no other option then number of people might be 0
             queries2=[i]
 
+        write_into_checkpoint_file(["boards of intrest are : "+str(boards),"name indentified is : "+str(name),"time period is : "+str(time_period)])
+        write_into_checkpoint_file(["Multiplied queries are : "])
+        write_into_checkpoint_file(queries2)
+        write_into_checkpoint_file(["-----------------------------------"])
         # here all ready -- modify and call the architecture built
 
 elif( level == "L2"):
     for i in queries1:
-        should_go_down_or_not=go_down_or_not(prompt4,i)
+        write_into_checkpoint_file(["Sub Query is : "+i])
+        should_go_down_or_not_flag=go_down_or_not(prompt4,i)
+
+        write_into_checkpoint_file(["Should we go down or not : "+str(should_go_down_or_not_flag)])
+
 
         # staying in the L2 level 
-        if not should_go_down_or_not:
+        if not should_go_down_or_not_flag:
             # changing the architecture and calling it here 
             pass
         else:
@@ -101,11 +116,20 @@ elif( level == "L2"):
             board,name,time_period=info_extractor(prompt2,i)
 
             # function call to find boards under the L2 board
-            boards=board_under_L2_board(board[0])
+            boards=board_under_L2_board(board[0],name[0])
+
+            write_into_checkpoint_file(["Intrest boards under L2 board  : "+str(boards),"Name of the person is : "+str(name),"time period is : "+str(time_period)])
+
+            if len(boards)==0:
+                continue
 
             queries2=query_multiplier(boards,name,i,prompt3)
 
-            for i in queries2:
+            write_into_checkpoint_file(["Multiplied queries are"])
+            write_into_checkpoint_file(queries2)
+            write_into_checkpoint_file(["-----------------------------------"])
+
+            for j in queries2:
                 # here all ready -- modify and call the architecture built
                 pass
 
@@ -113,12 +137,29 @@ else:
     # This is a L3 level query
     for i in queries1:
         where_to_go=L1_or_L2(prompt5,i)
-        print(i)
-        print(where_to_go)
+        write_into_checkpoint_file(["Where should we go to L1 or L2 level: "+str(where_to_go)])
 
-    
+        if where_to_go=="L2 level": 
+            # now we have boards , query and name =[]...
+            boards=L2
+        else:
+            # we have to go down to L1 level 
+            boards=L1
 
-        
+        query=i
+        queries2=query_multiplier(boards,[],query,prompt3)
+        write_into_checkpoint_file(["Multiplied queries are : "])
+        write_into_checkpoint_file(queries2)
+        write_into_checkpoint_file(["-----------------------------------"])
+
+        for j in queries2:
+            # here all ready -- modify and call the architecture built
+            pass
+
+
+
+write_into_checkpoint_file(["------------------------------------------------------------------------------------------------ Operation over "])
+
 
         
 

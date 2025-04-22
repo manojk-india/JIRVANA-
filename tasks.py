@@ -22,7 +22,7 @@ Splitter2 = Task(
 
 Multiplier=Task(
     description="""Take the {boards} ,{name} of the person and {query} and understand {prompt3} 
-    to create multiple queries """,
+    to create multiple queries, no function calling is required, just understand the inputs and create the queries""",
     expected_output="List of queries to be solved by agents",
     output_pydantic=queries,
     agent=English_expert
@@ -30,13 +30,14 @@ Multiplier=Task(
 
 should_go_down_or_not=Task(
     description=""" Take the user query {query} and understand {prompt4} to decide whether to go down the hierarchy or not""",
-    expected_output="Boolean value stating whether to go down the hierarchy or not",
+    expected_output="Boolean value stating whether to go down the hierarchy or not, dont use any function calling ... just understand the inputs and create the queries",
     output_pydantic=going_down_or_not,
     agent=English_expert
 )
 
 should_we_go_to_L1_or_L2=Task(
-    description=""" Take the user query {query} and understand {prompt5} to decide whether to go down to L1 level or L2 level""",
+    description=""" Take the user query {query} and understand {prompt5} to decide whether to go down to L1 level or L2 level
+    dont use any function calling ... just understand the inputs and create the queries",""",
     expected_output="Value denoting L1 level or L2 level ",
     output_pydantic=where_should_we_go,
     agent=English_expert
