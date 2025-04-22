@@ -44,3 +44,14 @@ FTE/FTC utilization for Transaction processing in APS1 board
 FTE/FTC utilization for Transaction processing in APS2 board
 -----------------------------------
 ------------------------------------------------------------------------------------------------ Operation over 
+query is : No of story points assigned to Hari in sprint 8
+Intial level is : L1
+queries splitted are : ['No of story points assigned to Hari in sprint 8']
+-----------------------------------
+Sub Query is : No of story points assigned to Hari in sprint 8
+boards of intrest are : ['CDF']
+name indentified is : ['Hari']
+time period is : True
+Multiplied queries are : 
+No of story points assigned to Hari in sprint 8
+-----------------------------------

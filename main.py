@@ -12,6 +12,7 @@ from prompt import prompt1,prompt2,prompt3,prompt4,prompt5
 from agents import English_expert,Jira_expert
 from tasks import Splitter1,Splitter2,Multiplier,should_go_down_or_not,should_we_go_to_L1_or_L2
 from utils import get_person_boards,board_under_L2_board,write_into_checkpoint_file
+from Main_architecture.crew import wrapper_function
 
 
 # Load environment variables
@@ -99,6 +100,11 @@ if ( level == "L1"):
         write_into_checkpoint_file(["-----------------------------------"])
         # here all ready -- modify and call the architecture built
 
+        for j in queries2:
+            # here all ready -- modify and call the architecture built
+            wrapper_function(j)
+
+
 elif( level == "L2"):
     for i in queries1:
         write_into_checkpoint_file(["Sub Query is : "+i])
@@ -109,7 +115,7 @@ elif( level == "L2"):
 
         # staying in the L2 level 
         if not should_go_down_or_not_flag:
-            # changing the architecture and calling it here 
+            # changing the architecture and calling it here -- here sprint is not relevant
             pass
         else:
             # going down to L1 level
@@ -131,7 +137,7 @@ elif( level == "L2"):
 
             for j in queries2:
                 # here all ready -- modify and call the architecture built
-                pass
+                wrapper_function(j)
 
 else:
     # This is a L3 level query
@@ -154,7 +160,7 @@ else:
 
         for j in queries2:
             # here all ready -- modify and call the architecture built
-            pass
+            wrapper_function(j)
 
 
 

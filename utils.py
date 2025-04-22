@@ -1,6 +1,50 @@
 # static functions 
 from typing import List
 import pandas as pd
+from datetime import datetime, timedelta
+
+# in hold -- not used upto now
+def get_previous_sprints(today=None):
+    # Use today's date if not provided
+    if today is None:
+        today = datetime.today().date()
+    else:
+        today = today.date()
+
+    sprint_start = datetime(2025, 1, 1).date()
+    sprint_length = 14
+    sprints = []
+    
+    # Generate all sprints for 2025
+    sprint_num = 1
+    while sprint_start.year == 2025:
+        sprint_end = sprint_start + timedelta(days=sprint_length - 1)
+        sprints.append({
+            "name": f"Sprint {sprint_num}",
+            "start": sprint_start,
+            "end": sprint_end
+        })
+        sprint_start += timedelta(days=sprint_length)
+        sprint_num += 1
+
+    # Find the sprint today falls into (or the next one after it)
+    current_sprint_index = None
+    for i, sprint in enumerate(sprints):
+        if sprint["start"] <= today <= sprint["end"]:
+            current_sprint_index = i
+            break
+        elif today < sprint["start"]:
+            current_sprint_index = i
+            break
+    if current_sprint_index is None:
+        current_sprint_index = len(sprints)
+
+    # Get previous 6 sprint names
+    start_index = max(0, current_sprint_index - 6)
+    return [s["name"] for s in sprints[start_index:current_sprint_index]]
+
+
+
 
 
 def get_person_boards(name: str) -> List[str]:
